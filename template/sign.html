@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Verification</title>
+</head>
+
+<body>
+
+    <div class="h-screen w-full flex">
+        <div class="w-[30%] h-screen bg-[#00768e] flex items-center justify-center">
+            <span class="text-7xl font-semibold ps-5 text-white" onclick="goToHome()">Signature Verification System</span>
+        </div>
+        <form action="/sign.html"
+        <div class="w-[70%] h-screen bg-white ">
+            <div class="flex justify-center items-center h-[65%]">
+                <div class="border-4 border-[#00768e] w-[80%] h-[80%]">
+                    <canvas id="myCanvas" width="846px" height="366px" onclick="draw()"></canvas>
+                </div>
+            </div>
+            <div class="flex justify-center h-[35%]">
+                <div class="w-[80%]">
+                    <div class="flex justify-center">
+                        <div class=" flex justify-between w-[80%]">
+                            <button
+                                class="btn bg-red-500 px-20 py-3 rounded-lg text-3xl hover:bg-gray-600 text-white">RESET</button>
+                            <button
+                                class="btn bg-[#153c43] px-20 py-3 rounded-lg text-3xl hover:bg-gray-600 text-white" onclick="saveImage()">SUBMIT</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-2">
+                        <div class="grid grid-rows-2 grid-flow-col gap-x-24 gap-y-4 text-3xl text-gray-700 mt-5">
+                            <div>
+                                <span>
+                                    Result
+                                </span>
+                            </div>
+                            <div>
+                                <span>
+                                    Your Name
+                                </span>
+                            </div>
+                            <div>
+                                <span>
+                                    : Verified
+                                </span>
+                            </div>
+                            
+                            <div>
+                                <span>
+                                    : Lakshan
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>  
+        var c = document.getElementById("myCanvas");  
+        var cctx = c.getContext("2d");  
+        ctx.fillStyle = "#FF0000";  
+        ctx.fillRect(0,0,200,100);  
+        </script>  
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var canvas = document.getElementById('myCanvas');
+            var ctx = canvas.getContext('2d');
+            var drawing = false;
+        
+            canvas.addEventListener('mousedown', function (e) {
+                drawing = true;
+                draw(e);
+            });
+        
+            canvas.addEventListener('mousemove', function (e) {
+                if (drawing) {
+                    draw(e);
+                }
+            });
+        
+            canvas.addEventListener('mouseup', function () {
+                drawing = false;
+                ctx.beginPath();
+            });
+        
+            function draw(e) {
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#000';
+        
+                ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            }
+
+            window.saveImage = function () {
+                var dataURL = canvas.toDataURL("static\\Uploads");
+                var a = document.createElement('a');
+                a.href = dataURL;
+                a.download = 'drawing.png';
+                a.click();
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/save_image', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log('Image saved successfully.');
+                    }
+                };
+
+                // Convert the dataURL to a Blob
+                var blobData = dataURLtoBlob(dataURL);
+
+                // Create FormData and append the image data
+                var formData = new FormData();
+                formData.append('image', blobData, 'drawing.png');
+
+                // Send the FormData to the server
+                xhr.send(formData);
+            };
+
+            function dataURLtoBlob(dataURL) {
+                var parts = dataURL.split(';base64,');
+                var contentType = parts[0].split(':')[1];
+                var raw = window.atob(parts[1]);
+                var array = new Uint8Array(new ArrayBuffer(raw.length));
+            
+                for (var i = 0; i < raw.length; i++) {
+                    array[i] = raw.charCodeAt(i);
+                }
+            
+                return new Blob([array], { type: contentType });
+            }
+        });
+        
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Verification</title>
+</head>
+
+<body>
+
+    <div class="h-screen w-full flex">
+        <div class="w-[30%] h-screen bg-[#00768e] flex items-center justify-center">
+            <span class="text-7xl font-semibold ps-5 text-white" onclick="goToHome()" class="hover:cursor-pointer">Signature Verification System</span>
+        </div>
+        <div class="w-[70%] h-screen bg-white ">
+            <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data">
+                <div class="flex justify-center items-center h-[65%]">
+                    <div class="border-4 border-[#00768e] w-[80%] h-[80%] flex justify-center items-center mt-2 mr-6 mb-8 ml-2">
+                            <label for="uploadfile">
+                                {% if result_data and result_data.image_path %}
+                                    <img src="{{ url_for('static', filename=result_data.image_path) }}" alt="Uploaded Image">
+                                {% else %}
+                                    <img src="{{url_for('static', filename='img/upload.png')}}" alt="uploadcenter" class="hover:cursor-pointer">
+                                {% endif %}
+                                <input type="file" accept="image/*" class="hidden" id="uploadfile" name="image" multiple>
+                            </label>  
+                        </div>
+                    </div>
+                    <div class="flex justify-center h-[35%]">
+                        <div class="w-[80%]">
+                            <div class="flex justify-center mt-5px mr-6 mb-8 ml-2">
+                                <div class=" flex justify-between w-[80%]">
+                                        <button
+                                            class="btn bg-[#153c43] px-20 py-3 rounded-lg text-3xl hover:bg-gray-600 text-white">UPLOAD</button>
+                                    <button
+                                        class="btn border-[#153c43] border-4 px-20 py-3 rounded-lg text-3xl hover:bg-[#153c43] hover:text-white " formmethod="GET" onclick="goToUpload()">CANCEL</button>
+                                </div>
+                            </div>
+                            <div class="flex justify-center mt-2">
+                                <div class="grid grid-rows-2 grid-flow-col gap-x-24 gap-y-4 text-3xl text-gray-700 mt-5">
+                                    <div>
+                                        <span>
+                                            Result
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span>
+                                            Your Name
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span>
+                                            : {{ result_data.verified }}
+                                        </span>
+                                    </div>
+
+                                    <div>
+                                        <span>
+                                            : {{ result_data.name }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- <script>
+        function uploadImage() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/uploadfile.html', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script> -->
+</body>
+
+</html>
